@@ -26,16 +26,13 @@
 </head>
 <body class="composite">
 <div id="banner"><a href="<c:url value="/default.do" />" id="bannerLeft">
-<img src="img/taokeeper-logo.png" alt=""  border="2"/> </a>
+<img src="img/zk_monitor.png" alt=""  border="2"/> </a>
 <div class="clear">
 <hr />
 </div>
 </div>
 <div id="breadcrumbs">
 <div class="xright">
-<a target="_blank" href="http://baike.corp.taobao.com/index.php/ZooKeeper_Lab">TaoKeeper百科</a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<a target="_blank" href="http://www2.im.alisoft.com/webim/tribe/tribeDetail.htm?tribeId=405776981">ZooKeeper 交流群：405776981</a>
 </div>
 <div class="clear">
 <hr />
