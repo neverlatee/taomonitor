@@ -4,53 +4,63 @@ import java.util.List;
 
 /**
  * Description: Model: ZooKeeperCluster
- * 
+ * 	代表一个配置好的zk集群
  * @author yinshi.nc
  * @Date 2011-10-26
  */
-public class ZooKeeperCluster {
-
-	public List< String > getServerList() {
+public class ZooKeeperCluster
+{
+	public List<String> getServerList()
+	{
 		return serverList;
 	}
 
-	public void setServerList( List< String > serverList ) {
+	public void setServerList(List<String> serverList)
+	{
 		this.serverList = serverList;
 	}
 
 	private int clusterId;
 	private String clusterName;
 	/** ip:prot */
-	private List< String > serverList;
+	private List<String> serverList;
 	private String description;
 
-	public int getClusterId() {
+	public int getClusterId()
+	{
 		return clusterId;
 	}
 
-	public void setClusterId( int clusterId ) {
+	public void setClusterId(int clusterId)
+	{
 		this.clusterId = clusterId;
 	}
 
-	public String getClusterName() {
+	public String getClusterName()
+	{
 		return clusterName;
 	}
 
-	public void setClusterName( String clusterName ) {
+	public void setClusterName(String clusterName)
+	{
 		this.clusterName = clusterName;
 	}
 
-	public String getDescription() {
+	public String getDescription()
+	{
 		return description;
 	}
 
-	public void setDescription( String description ) {
+	public void setDescription(String description)
+	{
 		this.description = description;
 	}
 
 	@Override
-	public String toString() {
-		return "[clusterId: " + this.clusterId + ", clusterName: " + this.clusterName + ", serverList: " + this.serverList;
+	public String toString()
+	{
+		return "[clusterId: " + this.clusterId + ", clusterName: " + this.clusterName + ", serverList: "
+				+ this.serverList;
 	}
 
 }

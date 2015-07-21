@@ -1,6 +1,7 @@
 package com.taobao.taokeeper.monitor.core.task.runable;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,42 +18,82 @@ import common.toolkit.java.exception.DaoException;
  * @author nileader / nileader@gmail.com
  * @Date Feb 16, 2012
  */
-public class ZKClusterConfigDumper implements Runnable {
+public class ZKClusterConfigDumper implements Runnable
+{
 
-	private static final Logger LOG = LoggerFactory.getLogger( ZKClusterConfigDumper.class );
+	private static final Logger LOG = LoggerFactory.getLogger(ZKClusterConfigDumper.class);
+	private CountDownLatch countDownLatch;
+
+	public ZKClusterConfigDumper()
+	{
+
+	}
+
+	public ZKClusterConfigDumper(CountDownLatch countDownLatch)
+	{
+		this.setCountDownLatch(countDownLatch);
+	}
 
 	@Override
-	public void run() {
-		try {
+	public void run()
+	{
+		try
+		{
 			dumpZooKeeperClusterMapToMemory();
-		} catch ( DaoException daoException ) {
-			LOG.error( "Error when dump zookeeper cluster config info to memeory: " + daoException.getMessage() );
+		}
+		catch (DaoException daoException)
+		{
+			LOG.error("Error when dump zookeeper cluster config info to memeory: " + daoException.getMessage());
 			daoException.printStackTrace();
-		} catch ( Throwable e ) {
-			LOG.error( "Error when dump zookeeper cluster config info to memeory: " + e.getMessage() );
+		}
+		catch (Throwable e)
+		{
+			LOG.error("Error when dump zookeeper cluster config info to memeory: " + e.getMessage());
 			e.printStackTrace();
+		}
+		finally
+		{
+			if (countDownLatch != null)
+			{
+				this.countDownLatch.countDown();
+			}
 		}
 	}
 
 	/**
 	 * Dump zooKeeper cluster config info from database
 	 */
-	private boolean dumpZooKeeperClusterMapToMemory() throws DaoException {
+	private boolean dumpZooKeeperClusterMapToMemory() throws DaoException
+	{
 		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-		ZooKeeperClusterDAO zooKeeperClusterDAO = ( ZooKeeperClusterDAO ) wac.getBean( "zooKeeperClusterDAO" );
-		List< ZooKeeperCluster > zookeeperClusterSet = zooKeeperClusterDAO.getAllDetailZooKeeperCluster();
-		if ( null == zookeeperClusterSet || zookeeperClusterSet.isEmpty() ) {
-			LOG.warn( "No zookeeper cluster" );
-		} else {
+		ZooKeeperClusterDAO zooKeeperClusterDAO = (ZooKeeperClusterDAO) wac.getBean("zooKeeperClusterDAO");
+		List<ZooKeeperCluster> zookeeperClusterSet = zooKeeperClusterDAO.getAllDetailZooKeeperCluster();
+		if (null == zookeeperClusterSet || zookeeperClusterSet.isEmpty())
+		{
+			LOG.warn("No zookeeper cluster");
+		}
+		else
+		{
 			// First clean up catch.
 			GlobalInstance.clearZooKeeperCluster();
-			
-			for ( ZooKeeperCluster zooKeeperCluster : zookeeperClusterSet ) { 
-				GlobalInstance.putZooKeeperCluster( zooKeeperCluster.getClusterId(), zooKeeperCluster );
+
+			for (ZooKeeperCluster zooKeeperCluster : zookeeperClusterSet)
+			{
+				GlobalInstance.putZooKeeperCluster(zooKeeperCluster.getClusterId(), zooKeeperCluster);
 			}
-			LOG.info( "Finsh dump all cluster info from db: " + GlobalInstance.getAllZooKeeperCluster() );
+			LOG.info("Finsh dump all cluster info from db: " + GlobalInstance.getAllZooKeeperCluster());
 		}
 		return true;
+	}
+
+	public CountDownLatch getCountDownLatch()
+	{
+		return countDownLatch;
+	}
+
+	public void setCountDownLatch(CountDownLatch countDownLatch)
+	{
+		this.countDownLatch = countDownLatch;
 	}
 
 }

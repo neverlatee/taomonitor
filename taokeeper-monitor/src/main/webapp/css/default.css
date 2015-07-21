@@ -87,7 +87,7 @@ a:active,a:hover {
 }
 
 #banner {
-	height: 75px;
+	height: 105px;
 	background-color: #e2f3b8;
 }
 
@@ -96,7 +96,8 @@ a:active,a:hover {
 }
 
 #banner a#bannerLeft img {
-	margin: 10px 0 0 10px !important;
+	margin: 5px 0 0 10px !important;
+	height: 95px;
 }
 
 #legend {

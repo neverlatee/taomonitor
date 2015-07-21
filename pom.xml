@@ -6,16 +6,16 @@
 	<name>taokeeper</name>
 	<version>1.1.2</version><!-- 注意同时修改下面的properties中的版本号 -->
 	<packaging>pom</packaging>
-	<description>Taobao.com ZooKeeper Keeper(Include ZK permissions, defend, some tools, etc. )</description>
+	<description>zookeeper monitor</description>
 	<organization>
-		<name>Taobao.com-RD-Common</name>
-		<url>http://rdc.taobao.com/team/jm</url>
+		<name>netease.cp</name>
+		<url>http://caipiao.163.com/</url>
 	</organization>
 	<developers>
 		<developer>
-			<id>yinshi.nc</id>
-			<name>银时</name>
-			<email>yinshi.nc@taobao.com</email>
+			<id>zhangwei2014</id>
+			<name>张伟</name>
+			<email>zhangwei2014@corp.netease.com</email>
 		</developer>
 	</developers>
 
@@ -31,16 +31,11 @@
 	<properties>
 
 		<taokeeper.version>1.1.2</taokeeper.version>
-		<toolkit.version>0.0.4</toolkit.version>
+		<toolkit.version>0.0.5</toolkit.version>
 		<source.encoding>UTF-8</source.encoding>
 		<java.version>1.6</java.version>
-
 		<zookeeper.version>3.4.3</zookeeper.version>
 		<zkclient.version>0.2</zkclient.version>
-
-
-
-
 
 		<!-- Maven plugin -->
 		<maven-source-plugin.version>2.0.3</maven-source-plugin.version>
@@ -75,7 +70,6 @@
 		<spring.test.version>3.1.0.RELEASE</spring.test.version>
 		<ibatis.version>2.3.4.726</ibatis.version>
 
-
 		<servlet.version>2.5</servlet.version>
 		<javamail.version>1.4.3</javamail.version>
 		<junit.version>4.8.2</junit.version>
@@ -90,10 +84,9 @@
 
 		<mysql-connector-java.version>5.1.12</mysql-connector-java.version>
 		<ganymed.ssh.version>build210</ganymed.ssh.version>
+		<com.jcraft.version>0.1.46</com.jcraft.version>
 		<jsontools.version>1.7</jsontools.version>
 		<json.version>20141113</json.version>
-
-
 
 		<!-- HTML tags -->
 		<displaytag.version>1.2</displaytag.version>
@@ -102,10 +95,6 @@
 		<sitemesh.version>2.4.2</sitemesh.version>
 
 	</properties>
-
-
-
-
 
 	<build>
 		<finalName>${artifactId}-${version}</finalName>
@@ -219,7 +208,6 @@
 				<artifactId>commons-fileupload</artifactId>
 				<version>${commons-fileupload.version}</version>
 			</dependency>
-
 
 			<!-- Spring -->
 			<dependency>
@@ -360,7 +348,12 @@
 				<artifactId>ganymed-ssh2</artifactId>
 				<version>${ganymed.ssh.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>${com.jcraft.version}</version>
+			</dependency>
+			
 			<!-- ZooKeeper -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>

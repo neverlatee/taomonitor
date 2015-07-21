@@ -1,4 +1,5 @@
 package com.taobao.taokeeper.monitor.web;
+
 import static common.toolkit.java.constant.EmptyObjectConstant.EMPTY_STRING;
 import static common.toolkit.java.constant.SymbolConstant.COMMA;
 import static common.toolkit.java.constant.SymbolConstant.SQUARE_BRACKETS_LEFT;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -35,182 +37,212 @@ import common.toolkit.java.util.io.ServletUtil;
  */
 @Controller
 @RequestMapping("/zooKeeper.do")
-public class ZooKeeperController extends BaseController {
-	
-	
-	private static final Logger LOG = LoggerFactory.getLogger( ZooKeeperController.class ); 
-	
-	
-	@RequestMapping(params = "method=zooKeeperRegisterPAGE")
-	public ModelAndView zooKeeperRegisterPAGE(HttpServletRequest request, HttpServletResponse response, String handleMessage ) {
-		return new ModelAndView("monitor/zooKeeperRegisterPAGE", null );
-	}
-	
-	
-	@RequestMapping(params = "method=zooKeeperSettingsPAGE")
-	public ModelAndView zooKeeperSettingsPAGE(HttpServletRequest request, HttpServletResponse response, String clusterId, String handleMessage ) {
+public class ZooKeeperController extends BaseController
+{
 
-		clusterId = StringUtil.defaultIfBlank( clusterId, 1 + EMPTY_STRING );
-		
-		try {
-			Map<Integer, ZooKeeperCluster > zooKeeperClusterMap = GlobalInstance.getAllZooKeeperCluster();
-			ZooKeeperCluster zooKeeperCluster = zooKeeperClusterMap.get( Integer.parseInt( clusterId ) );
-			if( null == zooKeeperCluster ){
-				zooKeeperCluster = zooKeeperClusterDAO.getZooKeeperClusterByCulsterId( Integer.parseInt( clusterId) );
+	private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperController.class);
+
+	@RequestMapping(params = "method=zooKeeperRegisterPAGE")
+	public ModelAndView zooKeeperRegisterPAGE(HttpServletRequest request, HttpServletResponse response,
+			String handleMessage)
+	{
+		return new ModelAndView("monitor/zooKeeperRegisterPAGE", null);
+	}
+
+	@RequestMapping(params = "method=zooKeeperSettingsPAGE")
+	public ModelAndView zooKeeperSettingsPAGE(HttpServletRequest request, HttpServletResponse response,
+			String clusterId, String handleMessage)
+	{
+
+		clusterId = StringUtil.defaultIfBlank(clusterId, 1 + EMPTY_STRING);
+		try
+		{
+			Map<Integer, ZooKeeperCluster> zooKeeperClusterMap = GlobalInstance.getAllZooKeeperCluster();
+			ZooKeeperCluster zooKeeperCluster = zooKeeperClusterMap.get(Integer.parseInt(clusterId));
+			if (null == zooKeeperCluster)
+			{
+				List<ZooKeeperCluster> zooKeeperClusterList = zooKeeperClusterDAO.getAllDetailZooKeeperCluster();
+				if (CollectionUtils.isNotEmpty(zooKeeperClusterList))
+				{
+					zooKeeperCluster = zooKeeperClusterList.get(0);
+				}
 			}
-			
-			if( null ==  zooKeeperCluster ){
-				ServletUtil.writeToResponse( response, "目前还没有这样的ZK集群<a href='zooKeeper.do?method=zooKeeperRegisterPAGE'><font color='red'> 加入监控</font></a>" );
+
+			if (null == zooKeeperCluster)
+			{
+				ServletUtil
+						.writeToResponse(response,
+								"目前还没有这样的ZK集群<a href='zooKeeper.do?method=zooKeeperRegisterPAGE'><font color='red'> 加入监控</font></a>");
 				return null;
 			}
-			
-			
+
 			//由于serverList格式问题，因为这里要特殊处理
-			String zooKeeperClusterServerList = CollectionUtil.toString( zooKeeperCluster.getServerList() );
+			String zooKeeperClusterServerList = CollectionUtil.toString(zooKeeperCluster.getServerList());
 			Map<String, Object> model = new HashMap<String, Object>();
-			model.put( "zooKeeperCluster", zooKeeperCluster );
-			model.put( "zooKeeperClusterMap", zooKeeperClusterMap );
-			model.put("clusterId", clusterId );
-			model.put( "zooKeeperClusterServerList", zooKeeperClusterServerList );
-			model.put( "handleMessage", handleMessage );
-			return new ModelAndView("monitor/zooKeeperSettingsPAGE", model );
-		} catch ( NumberFormatException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch ( Exception e ) {
+			model.put("zooKeeperCluster", zooKeeperCluster);
+			model.put("zooKeeperClusterMap", zooKeeperClusterMap);
+			model.put("clusterId", clusterId);
+			model.put("zooKeeperClusterServerList", zooKeeperClusterServerList);
+			model.put("handleMessage", handleMessage);
+			return new ModelAndView("monitor/zooKeeperSettingsPAGE", model);
+		}
+		catch (NumberFormatException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
-		
+
 	}
 
 	/**
 	 * 注意，这里更新完数据库后，还要更新缓存。
 	 */
 	@RequestMapping(params = "method=updateZooKeeperSettingsHandle")
-	public String updateZooKeeperSettingsHandle(HttpServletRequest request, HttpServletResponse response, 
-			String clusterId,
-			String clusterName,
-			String serverListString,
-			String description ) {
-		
-		try {
-			if( StringUtil.isBlank( clusterId ) )
-				throw new Exception( "clusterId 不能为空" );
-			
+	public String updateZooKeeperSettingsHandle(HttpServletRequest request, HttpServletResponse response,
+			String clusterId, String clusterName, String serverListString, String description)
+	{
+
+		try
+		{
+			if (StringUtil.isBlank(clusterId))
+				throw new Exception("clusterId 不能为空");
+
 			ZooKeeperCluster zooKeeperCluster = new ZooKeeperCluster();
-			zooKeeperCluster.setClusterId( Integer.parseInt( clusterId ) );
-			zooKeeperCluster.setClusterName( clusterName );
-			zooKeeperCluster.setDescription( description );
-			if( !StringUtil.isBlank( serverListString ) ){
-				zooKeeperCluster.setServerList( ListUtil.parseList( serverListString.replace( SQUARE_BRACKETS_LEFT, EMPTY_STRING ).replace( SQUARE_BRACKETS_RIGHT, EMPTY_STRING ), COMMA ) );
+			zooKeeperCluster.setClusterId(Integer.parseInt(clusterId));
+			zooKeeperCluster.setClusterName(clusterName);
+			zooKeeperCluster.setDescription(description);
+			if (!StringUtil.isBlank(serverListString))
+			{
+				zooKeeperCluster.setServerList(ListUtil.parseList(
+						serverListString.replace(SQUARE_BRACKETS_LEFT, EMPTY_STRING).replace(SQUARE_BRACKETS_RIGHT,
+								EMPTY_STRING), COMMA));
 			}
-			
+
 			//进行Update
 			String handleMessage = null;
-			if( zooKeeperClusterDAO.updateZooKeeperSettingsByClusterId( zooKeeperCluster ) ){
-				LOG.info( "完成zooKeeper集群更新：" + zooKeeperCluster );
+			if (zooKeeperClusterDAO.updateZooKeeperSettingsByClusterId(zooKeeperCluster))
+			{
+				LOG.info("完成zooKeeper集群更新：" + zooKeeperCluster);
 				//Update zk cluster config info of memory
-				ThreadPoolManager.addJobToZKClusterDumperExecutor( new ZKClusterConfigDumper() );
-				
+				ThreadPoolManager.addJobToZKClusterDumperExecutor(new ZKClusterConfigDumper());
+
 				handleMessage = "[Update Success], and update cache success.";
-			}else{
-				handleMessage = "Update Fail";
-				LOG.warn( "对zooKeeper集群信息更新失败-" + zooKeeperCluster );
 			}
-			return "redirect:/zooKeeper.do?method=zooKeeperSettingsPAGE&clusterId=" + clusterId + "&handleMessage=" + handleMessage;
-		} catch ( NumberFormatException e ) {
+			else
+			{
+				handleMessage = "Update Fail";
+				LOG.warn("对zooKeeper集群信息更新失败-" + zooKeeperCluster);
+			}
+			return "redirect:/zooKeeper.do?method=zooKeeperSettingsPAGE&clusterId=" + clusterId + "&handleMessage="
+					+ handleMessage;
+		}
+		catch (NumberFormatException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( DaoException e ) {
+		}
+		catch (DaoException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( Exception e ) {
+		}
+		catch (Exception e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	
-	
+
 	/**
 	 * 注册ZooKeeper集群, 并且自动完成缓存更新，插入一个默认报警设置
 	 */
 	@RequestMapping(params = "method=registerZooKeeperHandle")
-	public String registerZooKeeperHandle(HttpServletRequest request, HttpServletResponse response, 
-			String clusterName,
-			String serverListString,
-			String description ) {
-		
-		try {
-			
+	public String registerZooKeeperHandle(HttpServletRequest request, HttpServletResponse response, String clusterName,
+			String serverListString, String description)
+	{
+
+		try
+		{
+
 			ZooKeeperCluster zooKeeperCluster = new ZooKeeperCluster();
-			zooKeeperCluster.setClusterName( clusterName );
-			zooKeeperCluster.setDescription( description );
-			if( !StringUtil.isBlank( serverListString ) ){
-				zooKeeperCluster.setServerList( ListUtil.parseList( serverListString.replace( SQUARE_BRACKETS_LEFT, EMPTY_STRING ).replace( SQUARE_BRACKETS_RIGHT, EMPTY_STRING ), COMMA ) );
+			zooKeeperCluster.setClusterName(clusterName);
+			zooKeeperCluster.setDescription(description);
+			if (!StringUtil.isBlank(serverListString))
+			{
+				zooKeeperCluster.setServerList(ListUtil.parseList(
+						serverListString.replace(SQUARE_BRACKETS_LEFT, EMPTY_STRING).replace(SQUARE_BRACKETS_RIGHT,
+								EMPTY_STRING), COMMA));
 			}
-			
+
 			//进行Add
 			String handleMessage = null;
-			
-			int clusterId = zooKeeperClusterDAO.addZooKeeper( zooKeeperCluster );
-			
-			if( 0< clusterId ){
-				LOG.warn( "完成zooKeeper集群添加：" + zooKeeperCluster );
 
-				//Update zk cluster config info of memory
-				ThreadPoolManager.addJobToZKClusterDumperExecutor( new ZKClusterConfigDumper() );
-				
+			int clusterId = zooKeeperClusterDAO.addZooKeeper(zooKeeperCluster);
+
+			if (0 < clusterId)
+			{
+				LOG.warn("完成zooKeeper集群添加：" + zooKeeperCluster);
+
+				//Update zk cluster config info of memory | like caipiao refresh ini
+				ThreadPoolManager.addJobToZKClusterDumperExecutor(new ZKClusterConfigDumper());
+
 				//现在要加入一个默认的报警
-				alarmSettingsDAO.addAlarmSettings( new AlarmSettings( clusterId, "5", "60", "70", "2", "银时", "15869027928", "yinshi.nc@taobao.com", "200","1000","/home/yinshi.nc","/home/yinshi.nc","70","" ) );
-				
+				alarmSettingsDAO.addAlarmSettings(new AlarmSettings(clusterId, "5", "60", "70", "2", "zhangwei2014",
+						"18810497384", "zhangwei2014@corp.netease.com", "200", "1000",
+						"/home/project/taokeeper-monitor/data", "/home/project/taokeeper-monitor/logs", "70", ""));
+
 				//启动自检
-				if( null != zooKeeperCluster.getServerList() && !zooKeeperCluster.getServerList().isEmpty() ){
+				if (null != zooKeeperCluster.getServerList() && !zooKeeperCluster.getServerList().isEmpty())
+				{
 					final List<String> serverList = zooKeeperCluster.getServerList();
-					Thread aliveCheckThread = new Thread( new Runnable() {
+					Thread aliveCheckThread = new Thread(new Runnable() {
 						@Override
-						public void run() {
+						public void run()
+						{
 							ZooKeeperALiveCheckerJob job = new ZooKeeperALiveCheckerJob();
-							for( String server : serverList ){
-								job.checkAliveNoAlarm( server );
+							for (String server : serverList)
+							{
+								job.checkAliveNoAlarm(server);
 							}
 						}
 					});
 					aliveCheckThread.start();
 				}
-				
-				handleMessage = "Register Success, and add a default alarm settings for you.";
-			}else{
+
+				handleMessage = "注册成功，并添加了默认报警配置!";
+			}
+			else
+			{
 				handleMessage = "Register Fail";
 				clusterId = 1;
 			}
-			return "redirect:/zooKeeper.do?method=zooKeeperSettingsPAGE&clusterId=" + clusterId + "&handleMessage=" + handleMessage;
-		} catch ( NumberFormatException e ) {
+			return "redirect:/zooKeeper.do?method=zooKeeperSettingsPAGE&clusterId=" + clusterId + "&handleMessage="
+					+ handleMessage;
+		}
+		catch (NumberFormatException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( DaoException e ) {
+		}
+		catch (DaoException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( Exception e ) {
+		}
+		catch (Exception e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

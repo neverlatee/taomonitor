@@ -2,6 +2,7 @@ package com.taobao.taokeeper.monitor.core;
 
 import java.util.Properties;
 import java.util.Timer;
+import java.util.concurrent.CountDownLatch;
 
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
@@ -16,14 +17,12 @@ import com.taobao.taokeeper.common.SystemInfo;
 import com.taobao.taokeeper.common.constant.SystemConstant;
 import com.taobao.taokeeper.dao.SettingsDAO;
 import com.taobao.taokeeper.model.TaoKeeperSettings;
-import com.taobao.taokeeper.model.type.Message;
 import com.taobao.taokeeper.monitor.core.task.HostPerformanceCollectTask;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperALiveCheckerJob;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperClusterMapDumpJob;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperNodeChecker;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperStatusCollectJob;
 import com.taobao.taokeeper.monitor.core.task.runable.ClientThroughputStatJob;
-import com.taobao.taokeeper.reporter.alarm.TbMessageSender;
 import common.toolkit.java.constant.BaseConstant;
 import common.toolkit.java.exception.DaoException;
 import common.toolkit.java.util.ObjectUtil;
@@ -50,16 +49,16 @@ public class Initialization extends HttpServlet implements Servlet
 		/** Init threadpool */
 		ThreadPoolManager.init();
 
+		/**读取配置文件初始化*/
 		initSystem();
 
-		// Start the job of dump db info to memeory
-		Thread zooKeeperClusterMapDumpJobThread = new Thread(new ZooKeeperClusterMapDumpJob());
+		// Start the job of dump db info to memeory：加载数据库中zk配置到内存中
+		CountDownLatch latch = new CountDownLatch(1);
+		Thread zooKeeperClusterMapDumpJobThread = new Thread(new ZooKeeperClusterMapDumpJob(latch));
 		zooKeeperClusterMapDumpJobThread.start();
 		try
 		{
-			// 这里等待一下，因为第一次一定要dump成功，
-			// TODO 这个等待逻辑要改。
-			Thread.sleep(5000);
+			latch.await();
 		}
 		catch (InterruptedException e)
 		{
@@ -67,18 +66,16 @@ public class Initialization extends HttpServlet implements Servlet
 			e.printStackTrace();
 		}
 
+		/** 通过echo cons查看每个zk集群的回话连接数并记录到硬盘ZooKeeperClientThroughputStat中*/
 		ThreadUtil.startThread(new ClientThroughputStatJob());
 
-		/** 启动ZooKeeper数据修改通知检测 */
+		/** 启动ZooKeeper数据修改通知检测：通过对/ZOOKEEPER.MONITOR.ALIVE.CHECK这个持久节点的读写来监控zk节点的存活性 */
 		ThreadUtil.startThread(new ZooKeeperALiveCheckerJob());
 
 		/** 启动ZooKeeper集群状态收集 */
 		ThreadUtil.startThread(new ZooKeeperStatusCollectJob());
 
 		/** 收集机器CPU LOAD MEMEORY */
-		ThreadUtil.startThread(new HostPerformanceCollectTask());
-
-		/** */
 		ThreadUtil.startThread(new HostPerformanceCollectTask());
 
 		Timer timer = new Timer();
@@ -100,7 +97,6 @@ public class Initialization extends HttpServlet implements Servlet
 		LOG.info("*********************************************************");
 		LOG.info("****************TaoKeeper Startup Success****************");
 		LOG.info("*********************************************************");
-		LOG.info("任何建议与问题，请到 http://jm-blog.aliapp.com/?p=1450 进行反馈。");
 	}
 
 	/**
@@ -145,14 +141,16 @@ public class Initialization extends HttpServlet implements Servlet
 				properties.getProperty("SystemConstant.userNameOfSSH"), "appuser");
 		SystemConstant.passwordOfSSH = StringUtil.defaultIfBlank(
 				properties.getProperty("SystemConstant.passwordOfSSH"), "");
+		SystemConstant.identityOfSSH = StringUtil.defaultIfBlank(
+				properties.getProperty("SystemConstant.identityOfSSH"), "");
 		SystemConstant.portOfSSH = IntegerUtil.defaultIfError(properties.getProperty("SystemConstant.portOfSSH"), 8822);
 
 		SystemConstant.IP_OF_MESSAGE_SEND = StringUtil.trimToEmpty(properties
 				.getProperty("SystemConstant.IP_OF_MESSAGE_SEND"));
 
 		LOG.info("=================================Finish init system===========================");
-		ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message("银时", "TaoKeeper启动",
-				"TaoKeeper启动", Message.MessageType.WANGWANG)));
+		//		ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message("银时", "TaoKeeper启动",
+		//				"TaoKeeper启动", Message.MessageType.WANGWANG)));
 
 		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
 		SettingsDAO settingsDAO = (SettingsDAO) wac.getBean("taoKeeperSettingsDAO");

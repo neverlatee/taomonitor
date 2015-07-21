@@ -12,7 +12,7 @@ import common.toolkit.java.util.StringUtil;
 public class SystemConstant
 {
 
-	public final static String ZOOKEEPER_MONITOR_PATH = "/YINSHI.MONITOR.ALIVE.CHECK";
+	public final static String ZOOKEEPER_MONITOR_PATH = "/ZOOKEEPER.MONITOR.ALIVE.CHECK";
 
 	public final static String AUTHENTICATION_TYPE = "digest";
 
@@ -43,6 +43,7 @@ public class SystemConstant
 	public static String userNameOfSSH = "nobody";
 	public static String passwordOfSSH = "look";
 	public static int portOfSSH = 22;
+	public static String identityOfSSH = "~/.ssh/id_rsa";//密钥
 
 	/** ZooKeeper监控信息存储设置客户端统计信息文件存放目录 */
 	public static String dataStoreBasePath = "/home/yinshi.nc/zookeeper-monitor";

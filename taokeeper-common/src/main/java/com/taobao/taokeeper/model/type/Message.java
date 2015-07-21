@@ -6,7 +6,8 @@ package com.taobao.taokeeper.model.type;
  * @author 银时 yinshi.nc@taobao.com
  * @Date Dec 26, 2011
  */
-public class Message {
+public class Message
+{
 
 	/**
 	 * 邮件
@@ -31,14 +32,19 @@ public class Message {
 	/**
 	 * 消息类型
 	 */
-	public enum MessageType {
+	public enum MessageType
+	{
 		SMS(SMS_TYPE), EMAIL(MAIL_TYPE), WANGWANG(WANGWANG_TYPE);
 
 		private String type;
-		private MessageType( String type ) {
+
+		private MessageType(String type)
+		{
 			this.type = type;
 		}
-		public String toString() {
+
+		public String toString()
+		{
 			return this.type;
 		}
 	}
@@ -48,7 +54,8 @@ public class Message {
 	private String content;
 	private Message.MessageType type;
 
-	public Message( String targetAddresses, String subject, String content, Message.MessageType type ) {
+	public Message(String targetAddresses, String subject, String content, Message.MessageType type)
+	{
 		this.targetAddresses = targetAddresses;
 		this.subject = subject;
 		this.content = content;
@@ -56,40 +63,49 @@ public class Message {
 	}
 
 	@Override
-	public String toString() {
-		return "[targetAddresses: " + this.targetAddresses + ", subject: " + this.subject + ", content: " + this.content + ", type: " + this.type
-				+ "]";
+	public String toString()
+	{
+		return "[targetAddresses: " + this.targetAddresses + ", subject: " + this.subject + ", content: "
+				+ this.content + ", type: " + this.type + "]";
 	}
 
-	public String getTargetAddresses() {
+	public String getTargetAddresses()
+	{
 		return targetAddresses;
 	}
 
-	public void setTargetAddresses( String targetAddresses ) {
+	public void setTargetAddresses(String targetAddresses)
+	{
 		this.targetAddresses = targetAddresses;
 	}
 
-	public String getSubject() {
+	public String getSubject()
+	{
 		return subject;
 	}
 
-	public void setSubject( String subject ) {
+	public void setSubject(String subject)
+	{
 		this.subject = subject;
 	}
 
-	public String getContent() {
+	public String getContent()
+	{
 		return content;
 	}
 
-	public void setContent( String content ) {
+	public void setContent(String content)
+	{
 		this.content = content;
 	}
 
-	public Message.MessageType getType() {
+	public Message.MessageType getType()
+	{
 		return type;
 	}
 
-	public void setType( Message.MessageType type ) {
+	public void setType(Message.MessageType type)
+	{
 		this.type = type;
 	}
 
