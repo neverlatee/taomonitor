@@ -61,6 +61,10 @@ public class ZKServerPerformanceCollector implements Runnable
 			{
 				return;
 			}
+			else
+			{
+				LOG.info("Has got HostPerformanceEntity: " + hostPerformanceEntity.toString());
+			}
 			sendAlarm(alarmSettings, hostPerformanceEntity, zookeeperCluster.getClusterName());
 			GlobalInstance.putHostPerformanceEntity(ip, hostPerformanceEntity);
 			LOG.info("HostPerformanceEntity collect of #" + zookeeperCluster.getClusterName() + "-" + ip);
@@ -114,11 +118,9 @@ public class ZKServerPerformanceCollector implements Runnable
 						ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message(wangwangList,
 								"ZK Server cpu usage too high-" + clusterName, hostPerformanceEntity.getIp()
 										+ " cpu usage too high! " + cpuUsage + "-" + maxCpuUsage + "=" + difference,
-								Message.MessageType.WANGWANG), new Message(phoneList, "ZK Server cpu usage too high-"
-								+ clusterName, "ZK Server cpu usage too high-" + clusterName
-								+ hostPerformanceEntity.getIp() + " cpu usage too high! " + cpuUsage + "-"
-								+ maxCpuUsage + "=" + difference, Message.MessageType.SMS)));
-						LOG.info("WangWangList: " + wangwangList);
+								Message.MessageType.YX)));
+						//						SendMessageUtil
+						//						.sendYxMessage(phoneList, "Zk node: " + server + " 存活性检测失败" + e.getMessage());
 					}
 				}
 			}
@@ -142,14 +144,7 @@ public class ZKServerPerformanceCollector implements Runnable
 
 						new Message(wangwangList, "ZK Server memory usage too high:-" + clusterName,
 								hostPerformanceEntity.getIp() + " memory too high：" + memoryUsage + "-"
-										+ maxMemoryUsage + "=" + difference, Message.MessageType.WANGWANG),
-
-						new Message(phoneList, "",
-								"ZK Server memory usage too high-" + clusterName + hostPerformanceEntity.getIp()
-										+ memoryUsage + "-" + maxMemoryUsage + "=" + difference,
-								Message.MessageType.SMS)
-
-						));
+										+ maxMemoryUsage + "=" + difference, Message.MessageType.YX)));
 						LOG.info("WangWangList: " + wangwangList);
 					}
 				}
@@ -169,17 +164,9 @@ public class ZKServerPerformanceCollector implements Runnable
 					if (GlobalInstance.needAlarm.get())
 					{
 
-						ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(
-
-						new Message(wangwangList, " ZK Server load usage too high-" + clusterName,
-								hostPerformanceEntity.getIp() + "：" + load + "-" + maxLoad + "=" + difference,
-								Message.MessageType.WANGWANG),
-
-						new Message(phoneList, "", "ZK Server load usage too high-" + clusterName
-								+ hostPerformanceEntity.getIp() + "：" + load + "-" + maxLoad + "=" + difference,
-								Message.MessageType.SMS)
-
-						));
+						ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message(wangwangList,
+								" ZK Server load usage too high-" + clusterName, hostPerformanceEntity.getIp() + "："
+										+ load + "-" + maxLoad + "=" + difference, Message.MessageType.YX)));
 						LOG.info("WangWangList: " + wangwangList);
 					}
 				}
@@ -225,12 +212,7 @@ public class ZKServerPerformanceCollector implements Runnable
 										new Message(wangwangList, "ZK Server disk usage too high-" + clusterName,
 												hostPerformanceEntity.getIp() + " disk usage too high, " + mountedOn
 														+ ":" + diskUsage + "%, max setting usage is: " + maxDiskUsage
-														+ "%", Message.MessageType.WANGWANG),
-
-										new Message(phoneList, "", "ZK disk usage too high-" + clusterName
-												+ hostPerformanceEntity.getIp() + "," + mountedOn + ": " + diskUsage
-												+ "%, max setting usage is: " + maxDiskUsage + "%",
-												Message.MessageType.SMS)));
+														+ "%", Message.MessageType.YX)));
 										LOG.info("WangWangList: " + wangwangList);
 									}
 								}
@@ -248,5 +230,4 @@ public class ZKServerPerformanceCollector implements Runnable
 		}// disk alarm
 
 	}
-
 }

@@ -17,7 +17,6 @@ import com.taobao.taokeeper.common.SystemInfo;
 import com.taobao.taokeeper.common.constant.SystemConstant;
 import com.taobao.taokeeper.dao.SettingsDAO;
 import com.taobao.taokeeper.model.TaoKeeperSettings;
-import com.taobao.taokeeper.monitor.core.task.HostPerformanceCollectTask;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperALiveCheckerJob;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperClusterMapDumpJob;
 import com.taobao.taokeeper.monitor.core.task.ZooKeeperNodeChecker;
@@ -75,8 +74,8 @@ public class Initialization extends HttpServlet implements Servlet
 		/** 启动ZooKeeper集群状态收集 */
 		ThreadUtil.startThread(new ZooKeeperStatusCollectJob());
 
-		/** 收集机器CPU LOAD MEMEORY */
-		ThreadUtil.startThread(new HostPerformanceCollectTask());
+		/** 收集机器CPU LOAD MEMEORY :机器负载的先不做，可以在zabbix中代替*/
+		//ThreadUtil.startThread(new HostPerformanceCollectTask());
 
 		Timer timer = new Timer();
 		//开启ZooKeeper Node的Path检查
@@ -144,6 +143,8 @@ public class Initialization extends HttpServlet implements Servlet
 		SystemConstant.identityOfSSH = StringUtil.defaultIfBlank(
 				properties.getProperty("SystemConstant.identityOfSSH"), "");
 		SystemConstant.portOfSSH = IntegerUtil.defaultIfError(properties.getProperty("SystemConstant.portOfSSH"), 8822);
+		SystemConstant.consoleIp = StringUtil.defaultIfBlank(properties.getProperty("SystemConstant.consoleIp"),
+				"127.0.0.1");
 
 		SystemConstant.IP_OF_MESSAGE_SEND = StringUtil.trimToEmpty(properties
 				.getProperty("SystemConstant.IP_OF_MESSAGE_SEND"));

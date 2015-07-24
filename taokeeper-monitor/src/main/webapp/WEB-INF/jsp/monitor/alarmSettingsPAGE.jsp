@@ -94,7 +94,7 @@ a:visited { text-decoration:none}
 		 	<td colspan="2"   ><b>报警对象</b></td>
 		 </tr>
 		 <tr>
-		 	<td>旺旺</td>
+		 	<td>邮件(暂时未启用)</td>
 		 	<td><input type="text" name="wangwangList" id="wangwangList"  value="${alarmSettings.wangwangList}" size="50"/></td>
 		 </tr>
 		 <tr>

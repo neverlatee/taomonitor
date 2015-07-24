@@ -69,6 +69,7 @@ public class TbMessageSender implements MessageSender
 	private boolean sendMessage(String targetAddresses, String subject, String content, String channel)
 			throws Exception
 	{
+
 		return true;
 		//		if (StringUtil.isBlank(targetAddresses) || StringUtil.isBlank(channel))
 		//			return false;

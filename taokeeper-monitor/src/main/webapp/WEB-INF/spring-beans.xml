@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-autowire="byName" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans default-autowire="byName" xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
 	xsi:schemaLocation="
-			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
 	<!-- Service -->
 	<bean id="reportService" class="com.taobao.taokeeper.monitor.service.impl.ReportServiceImpl" />
@@ -10,4 +13,15 @@
 	<bean id="alarmSettingsDAO" class="com.taobao.taokeeper.dao.impl.AlarmSettingsDAOImpl" />
 	<bean id="taoKeeperSettingsDAO" class="com.taobao.taokeeper.dao.impl.SettingsDAOImpl" />
 	<bean id="reportDAO" class="com.taobao.taokeeper.dao.impl.ReportDAOImpl" />
+	
+	<!-- 提供方应用信息，用于计算依赖关系 -->
+	<dubbo:application name="taokeeper_consumer" />
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<dubbo:registry address="caipiao-registry1.hangzhou-1.zookeeper.internal.lede.com:2181" protocol="zookeeper" />
+	<!--  添加monitor -->
+	<dubbo:monitor protocol="registry"/>
+	<dubbo:consumer timeout="10000"/>
+	 <!-- 引用走势图rpc服务 -->
+    <dubbo:reference id="sendMessageService" interface="com.netease.lottery.service.remote.SendMessageService" check="false"/>
+	
 </beans>

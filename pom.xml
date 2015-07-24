@@ -18,7 +18,6 @@
 			<email>zhangwei2014@corp.netease.com</email>
 		</developer>
 	</developers>
-
 	<modules>
 		<module>taokeeper-common</module>
 		<module>taokeeper-monitor</module>
@@ -86,7 +85,8 @@
 		<ganymed.ssh.version>build210</ganymed.ssh.version>
 		<com.jcraft.version>0.1.46</com.jcraft.version>
 		<jsontools.version>1.7</jsontools.version>
-		<json.version>20141113</json.version>
+		<json.version>20140107</json.version>
+		<dubbo.version>2.5.4-SNAPSHOT</dubbo.version>
 
 		<!-- HTML tags -->
 		<displaytag.version>1.2</displaytag.version>
@@ -353,7 +353,7 @@
 				<artifactId>jsch</artifactId>
 				<version>${com.jcraft.version}</version>
 			</dependency>
-			
+
 			<!-- ZooKeeper -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>
@@ -453,6 +453,12 @@
 				<artifactId>common-toolkit</artifactId>
 				<version>${toolkit.version}</version>
 				<classifier>sources</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>${dubbo.version}</version>
 			</dependency>
 
 		</dependencies>

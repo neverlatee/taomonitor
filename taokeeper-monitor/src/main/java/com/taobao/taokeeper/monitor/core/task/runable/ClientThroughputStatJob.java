@@ -176,8 +176,18 @@ public class ClientThroughputStatJob implements Runnable
 				 * ,lzxid=0xffffffffffffffff
 				 * ,lresp=1322553184592,llat=0,minlat=0,avglat=0,maxlat=302)
 				 */
-				String consOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
-						SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_CONS, ip, port));
+				String consOutput = "";
+				if (!StringUtil.isBlank(SystemConstant.consoleIp))
+				{
+					consOutput = SSHUtil.execute(SystemConstant.consoleIp, SystemConstant.portOfSSH, userNameOfSSH,
+							passwordOfSSH, SystemConstant.identityOfSSH,
+							StringUtil.replaceSequenced(COMMAND_CONS, ip, port));
+				}
+				else
+				{
+					consOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
+							SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_CONS, ip, port));
+				}
 
 				if (StringUtil.isBlank(consOutput))
 				{

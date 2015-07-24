@@ -44,6 +44,7 @@ public class SystemConstant
 	public static String passwordOfSSH = "look";
 	public static int portOfSSH = 22;
 	public static String identityOfSSH = "~/.ssh/id_rsa";//密钥
+	public static String consoleIp = "127.0.0.1";//在哪台机器上执行zk命令
 
 	/** ZooKeeper监控信息存储设置客户端统计信息文件存放目录 */
 	public static String dataStoreBasePath = "/home/yinshi.nc/zookeeper-monitor";

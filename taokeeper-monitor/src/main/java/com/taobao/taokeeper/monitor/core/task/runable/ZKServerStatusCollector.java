@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.netease.lottery.util.SendMessageUtil;
 import com.taobao.taokeeper.common.GlobalInstance;
 import com.taobao.taokeeper.common.constant.SystemConstant;
 import com.taobao.taokeeper.dao.ReportDAO;
@@ -31,9 +32,6 @@ import com.taobao.taokeeper.model.TaoKeeperStat;
 import com.taobao.taokeeper.model.ZooKeeperCluster;
 import com.taobao.taokeeper.model.ZooKeeperStatus;
 import com.taobao.taokeeper.model.ZooKeeperStatusV2;
-import com.taobao.taokeeper.model.type.Message;
-import com.taobao.taokeeper.monitor.core.ThreadPoolManager;
-import com.taobao.taokeeper.reporter.alarm.TbMessageSender;
 import common.toolkit.java.entity.DateFormat;
 import common.toolkit.java.entity.io.Connection;
 import common.toolkit.java.entity.io.SSHResource;
@@ -112,8 +110,8 @@ public class ZKServerStatusCollector implements Runnable
 			sshZooKeeperAndHandleStat(ip, Integer.parseInt(port), zooKeeperStatus);
 			telnetZooKeeperAndHandleWchs(ip, Integer.parseInt(port), zooKeeperStatus);
 			sshZooKeeperAndHandleWchc(ip, Integer.parseInt(port), zooKeeperStatus, zookeeperCluster.getClusterId());
-			sshZooKeeperAndHandleRwps(ip, Integer.parseInt(port), (ZooKeeperStatusV2) zooKeeperStatus,
-					zookeeperCluster.getClusterId());
+			//			sshZooKeeperAndHandleRwps(ip, Integer.parseInt(port), (ZooKeeperStatusV2) zooKeeperStatus,
+			//					zookeeperCluster.getClusterId());
 			checkAndAlarm(alarmSettings, zooKeeperStatus, zookeeperCluster.getClusterName());
 			GlobalInstance.putZooKeeperStatus(ip, zooKeeperStatus);
 			//Store taokeeper stat to DB
@@ -152,9 +150,19 @@ public class ZKServerStatusCollector implements Runnable
 			 * Latency min/avg/max: 0/1/227 Received: 2349 Sent: 2641
 			 * Outstanding: 0 Zxid: 0xc00000243 Mode: follower Node count: 8
 			 */
-			sshResource = SSHUtil.executeWithoutHandleBufferedReader(ip, SystemConstant.portOfSSH, userNameOfSSH,
-					passwordOfSSH, SystemConstant.identityOfSSH,
-					StringUtil.replaceSequenced(COMMAND_STAT, ip, port + EMPTY_STRING));
+			if (!StringUtil.isBlank(SystemConstant.consoleIp))
+			{
+				sshResource = SSHUtil.executeWithoutHandleBufferedReader(SystemConstant.consoleIp,
+						SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_STAT, ip, port + EMPTY_STRING));
+			}
+			else
+			{
+				sshResource = SSHUtil.executeWithoutHandleBufferedReader(ip, SystemConstant.portOfSSH, userNameOfSSH,
+						passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_STAT, ip, port + EMPTY_STRING));
+			}
+
 			if (null == sshResource)
 			{
 				LOG.warn("No output of " + StringUtil.replaceSequenced(COMMAND_STAT, ip, port + EMPTY_STRING));
@@ -257,9 +265,18 @@ public class ZKServerStatusCollector implements Runnable
 				LOG.warn("Ip is empty");
 				return;
 			}
-			String wchsOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
-					SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_WCHS, ip, port + EMPTY_STRING));
-
+			String wchsOutput = "";
+			if (!StringUtil.isBlank(SystemConstant.consoleIp))
+			{
+				wchsOutput = SSHUtil.execute(SystemConstant.consoleIp, SystemConstant.portOfSSH, userNameOfSSH,
+						passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_WCHS, ip, port));
+			}
+			else
+			{
+				wchsOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
+						SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_WCHS, ip, port));
+			}
 			/**
 			 * Example: 59 connections watching 161 paths Total watches:405
 			 */
@@ -325,9 +342,18 @@ public class ZKServerStatusCollector implements Runnable
 			LOG.info("begin to excute ssh cmd | userName: " + userNameOfSSH + "| password:" + passwordOfSSH + "| ip:"
 					+ ip + "| port:" + SystemConstant.portOfSSH + "| identity:" + SystemConstant.identityOfSSH
 					+ "| command:" + StringUtil.replaceSequenced(COMMAND_WCHC, ip, port + EMPTY_STRING));
-			String wchcOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
-					SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_WCHC, ip, port + EMPTY_STRING));
-
+			String wchcOutput = "";
+			if (!StringUtil.isBlank(SystemConstant.consoleIp))
+			{
+				wchcOutput = SSHUtil.execute(SystemConstant.consoleIp, SystemConstant.portOfSSH, userNameOfSSH,
+						passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_WCHC, ip, port));
+			}
+			else
+			{
+				wchcOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
+						SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_WCHC, ip, port));
+			}
 			/**
 			 * Example: 59 connections watching 161 paths Total watches:405
 			 */
@@ -412,8 +438,18 @@ public class ZKServerStatusCollector implements Runnable
 				LOG.warn("Ip is empty");
 				return;
 			}
-			String rwpsOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
-					SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_RWPS, ip, port + EMPTY_STRING));
+			String rwpsOutput = "";
+			if (!StringUtil.isBlank(SystemConstant.consoleIp))
+			{
+				rwpsOutput = SSHUtil.execute(SystemConstant.consoleIp, SystemConstant.portOfSSH, userNameOfSSH,
+						passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_RWPS, ip, port));
+			}
+			else
+			{
+				rwpsOutput = SSHUtil.execute(ip, SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH,
+						SystemConstant.identityOfSSH, StringUtil.replaceSequenced(COMMAND_RWPS, ip, port));
+			}
 
 			/**
 			 * RealTime R/W Statistics:
@@ -602,15 +638,8 @@ public class ZKServerStatusCollector implements Runnable
 				LOG.warn("ZooKeeper连接数，Watcher数报警" + sb.toString());
 				if (GlobalInstance.needAlarm.get())
 				{
-					String wangwangList = alarmSettings.getWangwangList();
 					String phoneList = alarmSettings.getPhoneList();
-
-					ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message(wangwangList,
-							"ZooKeeper连接数，Watcher数报警-" + clusterName, clusterName + "-" + sb.toString(),
-							Message.MessageType.WANGWANG)));
-					ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message(phoneList,
-							"ZooKeeper连接数，Watcher数报警-" + clusterName, clusterName + "-" + sb.toString(),
-							Message.MessageType.WANGWANG)));
+					SendMessageUtil.sendYxMessage(phoneList, "ZooKeeper连接数，Watcher数报警：" + sb.toString());
 				}
 			}// need alarm
 		}

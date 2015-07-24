@@ -23,6 +23,10 @@ public class Message
 	 * 站内信
 	 */
 	public static final String SITE_TYPE = "4";
+	/**
+	 * 易信
+	 */
+	public static final String YX_TYPE = "5";
 
 	/**
 	 * 旺旺
@@ -34,7 +38,7 @@ public class Message
 	 */
 	public enum MessageType
 	{
-		SMS(SMS_TYPE), EMAIL(MAIL_TYPE), WANGWANG(WANGWANG_TYPE);
+		SMS(SMS_TYPE), EMAIL(MAIL_TYPE), WANGWANG(WANGWANG_TYPE), YX(YX_TYPE);
 
 		private String type;
 
