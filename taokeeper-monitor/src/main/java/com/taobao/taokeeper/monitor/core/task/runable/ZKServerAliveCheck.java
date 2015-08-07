@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.netease.lottery.util.SendMessageUtil;
 import com.taobao.taokeeper.common.GlobalInstance;
+import com.taobao.taokeeper.common.constant.SystemConstant;
 import com.taobao.taokeeper.model.AlarmSettings;
 import com.taobao.taokeeper.model.Subscriber;
 import com.taobao.taokeeper.model.ZooKeeperCluster;
@@ -111,7 +112,7 @@ public class ZKServerAliveCheck implements Runnable
 							{ // 连续两次check失败
 								GlobalInstance.putZooKeeperStatusType(ip, 2);
 								// 报警
-								if (GlobalInstance.needAlarm.get())
+								if (SystemConstant.SWITCH_ON.equals(alarmSettings.getNeedAlarm()))
 								{
 									//									ThreadPoolManager.addJobToMessageSendExecutor(new TbMessageSender(new Message(
 									//											phoneList, "ZooKeeper所在机器存活性检测失败" + this.zooKeeperCluster.getClusterName(),
@@ -132,12 +133,6 @@ public class ZKServerAliveCheck implements Runnable
 					}
 					catch (Throwable e)
 					{
-						// 报警
-						if (GlobalInstance.needAlarm.get())
-						{
-							SendMessageUtil
-									.sendYxMessage(phoneList, "Zk node: " + server + " 存活性检测失败" + e.getMessage());
-						}
 						GlobalInstance.putZooKeeperStatusType(ip, 2);
 						LOG.info("Exception when check #-" + this.zooKeeperCluster.getClusterName() + "-" + server
 								+ ", Error: " + e.getMessage(), e);

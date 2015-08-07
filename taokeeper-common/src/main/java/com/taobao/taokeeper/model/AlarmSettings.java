@@ -24,6 +24,7 @@ public class AlarmSettings
 	private String dataDir;
 	private String dataLogDir;
 	private String maxDiskUsage; //设置的目录的最大使用率，如果超过这个阈值，会报警。
+	private String needAlarm;// true or false
 
 	public AlarmSettings()
 	{
@@ -42,7 +43,7 @@ public class AlarmSettings
 			String dataDir, //
 			String dataLogDir, //
 			String maxDiskUsage,//
-			String nodePathCheckRule)
+			String nodePathCheckRule, String needAlarm)
 	{
 		this.clusterId = clusterId;
 		this.maxDelayOfCheck = maxDelayOfCheck;
@@ -58,6 +59,7 @@ public class AlarmSettings
 		this.dataLogDir = dataLogDir;
 		this.nodePathCheckRule = nodePathCheckRule;
 		this.setMaxDiskUsage(maxDiskUsage);
+		this.needAlarm = needAlarm;
 	}
 
 	public int getClusterId()
@@ -215,7 +217,18 @@ public class AlarmSettings
 	public String toString()
 	{
 		return "AlarmSettings:[clusterId=" + clusterId + ", maxDelayOfCheck=" + maxDelayOfCheck + ", maxCpuUsage="
-				+ maxCpuUsage + ", maxMemoryUsage=" + maxMemoryUsage + ", maxLoad=" + maxLoad;
+				+ maxCpuUsage + ", maxMemoryUsage=" + maxMemoryUsage + ", maxLoad=" + maxLoad + ", needAlarm="
+				+ needAlarm;
+	}
+
+	public String getNeedAlarm()
+	{
+		return needAlarm;
+	}
+
+	public void setNeedAlarm(String needAlarm)
+	{
+		this.needAlarm = needAlarm;
 	}
 
 }

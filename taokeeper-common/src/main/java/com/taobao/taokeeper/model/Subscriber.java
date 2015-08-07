@@ -90,11 +90,12 @@ public class Subscriber
 			}
 			catch (Exception e)
 			{
+				log.error("error during update data of zk node,serverList:" + serverList + ",path:" + path, e);
 				return false;
 			}
 		}
-
-		return okTimes == 3;
+		log.info("zk checkIfAlive,serverList:" + serverList + ",okTimes:" + okTimes);
+		return okTimes > 0;
 	}
 
 	public void close()

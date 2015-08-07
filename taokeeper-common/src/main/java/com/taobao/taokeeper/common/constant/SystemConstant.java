@@ -59,6 +59,7 @@ public class SystemConstant
 	public static String sourceIdOfMsgCenter = "";
 	public static String templateIdOfMsgCenter = "";
 	public static String messageTypeIdOfMsgCenter = "";
+	public static String SWITCH_ON = "true";
 
 	public void setDataStoreBasePath(String dataStoreBasePath)
 	{

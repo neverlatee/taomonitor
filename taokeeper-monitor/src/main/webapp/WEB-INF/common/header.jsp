@@ -9,8 +9,10 @@
 					href="<c:url value="/zooKeeper.do?method=zooKeeperSettingsPAGE" />">集群配置</a></li>
 				<li><a
 					href="<c:url value="/zooKeeperStatus.do?method=showZooKeeperStatusPAGE" />">集群监控</a></li>
+				<!-- 机器监控先暂时不用了
 				<li><a
 					href="<c:url value="/hostPerformance.do?method=showHostPerformancePAGE" />">机器监控</a></li>
+				 -->
 				<li><a
 					href="<c:url value="/alarmSettings.do?method=alarmSettingsPAGE" />">报警设置</a></li>
 			</ul>
@@ -19,8 +21,10 @@
 		<br>
 		<li>Admin
 			<ul>
+				<!-- 报警开关分集群
 				<li><a
 					href="<c:url value="admin.do?method=switchOfNeedAlarmPAGE" />">报警开关</a></li>
+					 -->
 				<li><a
 					href="<c:url value="admin.do?method=setSystemConfigPAGE" />">系统设置</a></li>
 			</ul>

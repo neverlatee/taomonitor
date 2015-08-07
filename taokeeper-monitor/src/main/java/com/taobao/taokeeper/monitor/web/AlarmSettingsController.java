@@ -41,7 +41,6 @@ public class AlarmSettingsController extends BaseController
 	{
 
 		clusterId = StringUtil.defaultIfBlank(clusterId, 1 + EMPTY_STRING);
-
 		try
 		{
 			Map<Integer, ZooKeeperCluster> zooKeeperClusterMap = GlobalInstance.getAllZooKeeperCluster();
@@ -49,6 +48,18 @@ public class AlarmSettingsController extends BaseController
 			AlarmSettings alarmSettings = GlobalInstance.getAlarmSettingsByClusterId(Integer.parseInt(clusterId));
 			if (null == alarmSettings)
 			{
+				alarmSettings = alarmSettingsDAO.getAlarmSettingsByCulsterId(Integer.parseInt(clusterId));
+			}
+			if (null == alarmSettings)
+			{//遍历map，取第一个clusterId进行显示
+				for (Map.Entry<Integer, ZooKeeperCluster> entry : zooKeeperClusterMap.entrySet())
+				{
+					if (entry.getValue() != null)
+					{
+						clusterId = String.valueOf(entry.getKey());
+						break;
+					}
+				}
 				alarmSettings = alarmSettingsDAO.getAlarmSettingsByCulsterId(Integer.parseInt(clusterId));
 			}
 			if (null == alarmSettings)
@@ -91,14 +102,14 @@ public class AlarmSettingsController extends BaseController
 	public String updateAlarmSettingsHandle(HttpServletRequest request, HttpServletResponse response, String clusterId,
 			String maxDelayOfCheck, String maxCpuUsage, String maxMemoryUsage, String maxLoad, String wangwangList,
 			String phoneList, String emailList, String maxConnectionPerIp, String maxWatchPerIp, String dataDir,
-			String dataLogDir, String maxDiskUsage, String nodePathCheckRule)
+			String dataLogDir, String maxDiskUsage, String nodePathCheckRule, String needAlarm)
 	{
 
 		try
 		{
 			if (StringUtil.isBlank(clusterId))
 				throw new Exception("clusterId 不能为空");
-
+			LOG.info("begin to update zk alarm setting,needAlarm:" + needAlarm);
 			AlarmSettings alarmSettings = new AlarmSettings();
 			alarmSettings.setClusterId(Integer.parseInt(clusterId));
 			alarmSettings.setMaxDelayOfCheck(StringUtil.trimToEmpty(maxDelayOfCheck));
@@ -114,6 +125,7 @@ public class AlarmSettingsController extends BaseController
 			alarmSettings.setDataLogDir(StringUtil.trimToEmpty(dataLogDir));
 			alarmSettings.setMaxDiskUsage(StringUtil.trimToEmpty(maxDiskUsage));
 			alarmSettings.setNodePathCheckRule(StringUtil.trimToEmpty(nodePathCheckRule));
+			alarmSettings.setNeedAlarm(StringUtil.trimToEmpty(needAlarm));
 			//进行Update
 			String handleMessage = null;
 			if (alarmSettingsDAO.updateAlarmSettingsByClusterId(alarmSettings))

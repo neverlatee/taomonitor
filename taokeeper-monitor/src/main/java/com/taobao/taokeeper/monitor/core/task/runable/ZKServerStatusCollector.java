@@ -636,7 +636,7 @@ public class ZKServerStatusCollector implements Runnable
 			if (needAlarm)
 			{
 				LOG.warn("ZooKeeper连接数，Watcher数报警" + sb.toString());
-				if (GlobalInstance.needAlarm.get())
+				if (SystemConstant.SWITCH_ON.equals(alarmSettings.getNeedAlarm()))
 				{
 					String phoneList = alarmSettings.getPhoneList();
 					SendMessageUtil.sendYxMessage(phoneList, "ZooKeeper连接数，Watcher数报警：" + sb.toString());

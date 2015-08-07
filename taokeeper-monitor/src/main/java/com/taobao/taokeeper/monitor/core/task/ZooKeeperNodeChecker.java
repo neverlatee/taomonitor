@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.netease.lottery.util.SendMessageUtil;
 import com.taobao.taokeeper.common.GlobalInstance;
+import com.taobao.taokeeper.common.constant.SystemConstant;
 import com.taobao.taokeeper.common.type.NodePathCheckRule;
 import com.taobao.taokeeper.common.util.AlarmSettingUtil;
 import com.taobao.taokeeper.dao.AlarmSettingsDAO;
@@ -195,7 +196,7 @@ public class ZooKeeperNodeChecker extends TimerTask
 					{
 						//规定path下面只能这些path，但是出现了额外的path
 						// 报警
-						if (GlobalInstance.needAlarm.get())
+						if (SystemConstant.SWITCH_ON.equals(alarmSettings.getNeedAlarm()))
 						{
 							SendMessageUtil.sendYxMessage(phoneList, "ZooKeeper Node的path检查结果,cluster: "
 									+ zookeeperCluster.getClusterName() + "| " + path + " 下存在多余的node：" + pathReal);

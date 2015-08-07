@@ -17,7 +17,7 @@
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="taokeeper_consumer" />
 	<!-- 使用zookeeper注册中心暴露服务地址 -->
-	<dubbo:registry address="caipiao-registry1.hangzhou-1.zookeeper.internal.lede.com:2181" protocol="zookeeper" />
+	<dubbo:registry address="10.120.118.85:2181" protocol="zookeeper" />
 	<!--  添加monitor -->
 	<dubbo:monitor protocol="registry"/>
 	<dubbo:consumer timeout="10000"/>

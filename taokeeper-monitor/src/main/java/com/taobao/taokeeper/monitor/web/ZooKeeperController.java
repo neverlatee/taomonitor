@@ -197,7 +197,8 @@ public class ZooKeeperController extends BaseController
 				//现在要加入一个默认的报警
 				alarmSettingsDAO.addAlarmSettings(new AlarmSettings(clusterId, "5", "60", "70", "2", "zhangwei2014",
 						"18810497384", "zhangwei2014@corp.netease.com", "200", "1000",
-						"/home/project/taokeeper-monitor/data", "/home/project/taokeeper-monitor/logs", "70", ""));
+						"/home/project/taokeeper-monitor/data", "/home/project/taokeeper-monitor/logs", "70", "",
+						"false"));
 
 				//启动自检
 				if (null != zooKeeperCluster.getServerList() && !zooKeeperCluster.getServerList().isEmpty())

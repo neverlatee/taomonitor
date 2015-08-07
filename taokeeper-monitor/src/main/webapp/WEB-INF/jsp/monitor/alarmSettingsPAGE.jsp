@@ -86,9 +86,13 @@ a:visited { text-decoration:none}
 	  		"<b>/</b>"这个path下，只能够出现nileader和yinshi这两个节点，"<b>/nileader</b>" 这个path下，只能够出现test节点, "<b>/</b>" 这个path下，不能够出现test节点<br>
 		 	</td>
 		 </tr>
+		 <tr>
+		 	<td valign="middle">报警开关</td>
+			<td valign="middle">
+				<input type="text" name="needAlarm" id="needAlarm" value="${alarmSettings.needAlarm}"/>
+			</td>
+		</tr>		
 
-
-	
 	
 		<tr style="background-color:#D3D1D1; text-align:center;">
 		 	<td colspan="2"   ><b>报警对象</b></td>
