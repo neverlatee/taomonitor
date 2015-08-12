@@ -78,4 +78,17 @@ public class PathAlarmController {
             settings.setAlarmLimits(alarmLimits);
         }
     }
+    @RequestMapping(value = "deleteAlarm")
+    private String modifyAlarm (HttpServletRequest request,HttpServletResponse response,Model model ){
+        String server=(String)request.getAttribute("server");
+        String path=(String)request.getAttribute("path");
+        Integer count=(Integer)request.getAttribute("targetCount");
+        Integer nodeDif=(Integer)request.getAttribute("nodeDif");
+        Integer alarmLimits = (Integer)request.getAttribute("alrmLimits");
+        PathAlarmSettings settings=pathAlarmService.getPathsAlarmSettingByPathAndServer(server,path);
+        modify(settings, count, nodeDif, alarmLimits);
+        pathAlarmService.putPathsAlarmSetting(settings);
+        ServletUtil.writeToResponse(response,
+                "修改成功，<a href='/getPath'><font color='red'> 返回</font></a>");
+        return null;
 }
