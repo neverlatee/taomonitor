@@ -13,11 +13,13 @@
 	<bean id="alarmSettingsDAO" class="com.taobao.taokeeper.dao.impl.AlarmSettingsDAOImpl" />
 	<bean id="taoKeeperSettingsDAO" class="com.taobao.taokeeper.dao.impl.SettingsDAOImpl" />
 	<bean id="reportDAO" class="com.taobao.taokeeper.dao.impl.ReportDAOImpl" />
-	
+
+	<bean id="pathAlarmService" class="com.netease.lottery.service.impl.PathAlarmServiceImpl"/>
+	<bean id="nodeService" class="com.netease.lottery.service.impl.NodeServiceImpl"/>
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="taokeeper_consumer" />
 	<!-- 使用zookeeper注册中心暴露服务地址 -->
-	<dubbo:registry address="10.120.118.85:2181" protocol="zookeeper" />
+	<dubbo:registry address="10.120.42.84:2181" protocol="zookeeper" />
 	<!--  添加monitor -->
 	<dubbo:monitor protocol="registry"/>
 	<dubbo:consumer timeout="10000"/>

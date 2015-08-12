@@ -6,27 +6,28 @@
 		<li>Monitor
 			<ul>
 				<li><a
-					href="<c:url value="/zooKeeper.do?method=zooKeeperSettingsPAGE" />">集群配置</a></li>
+					href="<c:url value="/zooKeeper.do?method=zooKeeperSettingsPAGE" />">录炉脠潞脜盲脰脙</a></li>
 				<li><a
-					href="<c:url value="/zooKeeperStatus.do?method=showZooKeeperStatusPAGE" />">集群监控</a></li>
-				<!-- 机器监控先暂时不用了
+					href="<c:url value="/zooKeeperStatus.do?method=showZooKeeperStatusPAGE" />">录炉脠潞录脿驴脴</a></li>
+				<!-- 禄煤脝梅录脿驴脴脧脠脭脻脢卤虏禄脫脙脕脣
 				<li><a
-					href="<c:url value="/hostPerformance.do?method=showHostPerformancePAGE" />">机器监控</a></li>
+					href="<c:url value="/hostPerformance.do?method=showHostPerformancePAGE" />">禄煤脝梅录脿驴脴</a></li>
 				 -->
 				<li><a
-					href="<c:url value="/alarmSettings.do?method=alarmSettingsPAGE" />">报警设置</a></li>
+					href="<c:url value="/alarmSettings.do?method=alarmSettingsPAGE" />">卤篓戮炉脡猫脰脙</a></li>
+				<li><a href="<c:url value="/nodeSetting.do/getCluster?flag=addNode" />">鑺傜偣閰嶇疆</a></li>
 			</ul>
 		</li>
 
 		<br>
 		<li>Admin
 			<ul>
-				<!-- 报警开关分集群
+				<!-- 卤篓戮炉驴陋鹿脴路脰录炉脠潞
 				<li><a
-					href="<c:url value="admin.do?method=switchOfNeedAlarmPAGE" />">报警开关</a></li>
+					href="<c:url value="admin.do?method=switchOfNeedAlarmPAGE" />">卤篓戮炉驴陋鹿脴</a></li>
 					 -->
 				<li><a
-					href="<c:url value="admin.do?method=setSystemConfigPAGE" />">系统设置</a></li>
+					href="<c:url value="admin.do?method=setSystemConfigPAGE" />">脧碌脥鲁脡猫脰脙</a></li>
 			</ul>
 		</li>
 
@@ -34,9 +35,9 @@
 		<!-- 
 	<li>Reports
 		<ul>
-			<li><a href="">日报</a></li>
-			<li><a href="">周报</a></li>
-			<li><a href="">趋势</a></li>
+			<li><a href="">脠脮卤篓</a></li>
+			<li><a href="">脰脺卤篓</a></li>
+			<li><a href="">脟梅脢脝</a></li>
 		</ul>
 	</li>
 -->

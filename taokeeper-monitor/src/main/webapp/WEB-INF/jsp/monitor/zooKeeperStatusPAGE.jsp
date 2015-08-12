@@ -89,6 +89,7 @@ a:visited {
 			<td><b>状态</b></td>
 			<td><b>节点自检状态</b></td>
 			<td><b>查看趋势</b></td>
+			<td><b>配置信息</b></td>
 		</tr>
 
 		<c:forEach var="zooKeeperStatus" items="${zooKeeperStatusMap}">
@@ -123,6 +124,7 @@ a:visited {
 				<td>&nbsp;&nbsp;&nbsp;&nbsp;<a
 					href="report.do?method=reportPAGE&clusterId=${clusterId}&server=${ zooKeeperStatus.key }"><img
 						style="cursor: pointer;" src="img/seeDetail.png" /></a></td>
+				<td>{zooKeeperStatus.value.conf}</td>
 			</tr>
 		</c:forEach>
 	</table>

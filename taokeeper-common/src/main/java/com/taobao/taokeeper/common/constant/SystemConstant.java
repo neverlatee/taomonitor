@@ -39,6 +39,8 @@ public class SystemConstant
 	public final static String COMMAND_WCHC = "echo wchc | nc {0} {1}";
 	public final static String COMMAND_RWPS = "echo rwps | nc {0} {1}";
 
+	//add by mengchenfei 
+	public final static String COMMAND_CONF = "echo conf | nc {0} {1}";
 	//ssh默认配置，在系统ini启动的时候会读取配置文件，重新设置
 	public static String userNameOfSSH = "nobody";
 	public static String passwordOfSSH = "look";

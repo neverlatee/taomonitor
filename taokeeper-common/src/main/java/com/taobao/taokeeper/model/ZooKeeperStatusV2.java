@@ -9,7 +9,14 @@ package com.taobao.taokeeper.model;
 public class ZooKeeperStatusV2 extends ZooKeeperStatus {
 
     private RWStatistics rwps;
-    public static class RWStatistics{
+    private String conf;
+    public String getConf() {
+		return conf;
+	}
+	public void setConf(String conf) {
+		this.conf = conf;
+	}
+	public static class RWStatistics{
 
 
         private double getChildren2;

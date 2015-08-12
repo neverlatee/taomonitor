@@ -4,6 +4,7 @@ import static com.taobao.taokeeper.common.constant.SystemConstant.COMMAND_RWPS;
 import static com.taobao.taokeeper.common.constant.SystemConstant.COMMAND_STAT;
 import static com.taobao.taokeeper.common.constant.SystemConstant.COMMAND_WCHC;
 import static com.taobao.taokeeper.common.constant.SystemConstant.COMMAND_WCHS;
+import static com.taobao.taokeeper.common.constant.SystemConstant.COMMAND_CONF;
 import static com.taobao.taokeeper.common.constant.SystemConstant.passwordOfSSH;
 import static com.taobao.taokeeper.common.constant.SystemConstant.userNameOfSSH;
 import static common.toolkit.java.constant.BaseConstant.WORD_SEPARATOR;
@@ -32,6 +33,8 @@ import com.taobao.taokeeper.model.TaoKeeperStat;
 import com.taobao.taokeeper.model.ZooKeeperCluster;
 import com.taobao.taokeeper.model.ZooKeeperStatus;
 import com.taobao.taokeeper.model.ZooKeeperStatusV2;
+import com.taobao.taokeeper.model.ZooKeeperStatusV2.RWStatistics;
+
 import common.toolkit.java.entity.DateFormat;
 import common.toolkit.java.entity.io.Connection;
 import common.toolkit.java.entity.io.SSHResource;
@@ -112,6 +115,8 @@ public class ZKServerStatusCollector implements Runnable
 			sshZooKeeperAndHandleWchc(ip, Integer.parseInt(port), zooKeeperStatus, zookeeperCluster.getClusterId());
 			//			sshZooKeeperAndHandleRwps(ip, Integer.parseInt(port), (ZooKeeperStatusV2) zooKeeperStatus,
 			//					zookeeperCluster.getClusterId());
+			//add by mengchenfei ,get Conf
+			sshZooKeeperAndHandleConf(ip,Integer.parseInt(port),zooKeeperStatus,zookeeperCluster.getClusterId());
 			checkAndAlarm(alarmSettings, zooKeeperStatus, zookeeperCluster.getClusterName());
 			GlobalInstance.putZooKeeperStatus(ip, zooKeeperStatus);
 			//Store taokeeper stat to DB
@@ -127,6 +132,63 @@ public class ZKServerStatusCollector implements Runnable
 		{
 			LOG.error("error during ZKServerStatusCollector collect :" + zookeeperCluster.getClusterName() + "-" + ip,
 					e);
+		}
+	}
+
+	private void sshZooKeeperAndHandleConf(String ip, int port,
+			ZooKeeperStatusV2 zooKeeperStatus, int clusterId) {
+		// TODO Auto-generated method stub
+		BufferedReader bufferedRead = null;
+		StringBuffer sb=new StringBuffer();
+		SSHResource sshResource = null;
+		try{
+			if (!StringUtil.isBlank(SystemConstant.consoleIp))
+			{
+				sshResource = SSHUtil.executeWithoutHandleBufferedReader(SystemConstant.consoleIp,
+						SystemConstant.portOfSSH, userNameOfSSH, passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_CONF, ip, port + EMPTY_STRING));
+			}
+			else
+			{
+				sshResource = SSHUtil.executeWithoutHandleBufferedReader(ip, SystemConstant.portOfSSH, userNameOfSSH,
+						passwordOfSSH, SystemConstant.identityOfSSH,
+						StringUtil.replaceSequenced(COMMAND_CONF, ip, port + EMPTY_STRING));
+			}
+
+			if (null == sshResource)
+			{
+				LOG.warn("No output of " + StringUtil.replaceSequenced(COMMAND_CONF, ip, port + EMPTY_STRING));
+				return;
+			}
+			bufferedRead = sshResource.reader;
+			if (null == bufferedRead)
+			{
+				LOG.warn("No output of " + StringUtil.replaceSequenced(COMMAND_CONF, ip, port + EMPTY_STRING));
+				return;
+			}
+			String line = "";
+			zooKeeperStatus.setIp(ip);
+			while ((line = bufferedRead.readLine()) != null){
+				sb.append(line);
+			}
+			zooKeeperStatus.setConf(sb.toString());
+			
+			
+		}catch (SSHException e)
+		{
+			LOG.warn("Error when telnetZooKeeperAndHandleStat:[ip:" + ip + ", port:" + port + " ] " + e.getMessage(), e);
+		}
+		catch (Exception e)
+		{
+			LOG.error("程序出错:" + e.getMessage());
+		}
+		finally
+		{
+			IOUtil.closeReader(bufferedRead);
+			if (null != sshResource)
+			{
+				sshResource.closeAllResource();
+			}
 		}
 	}
 
